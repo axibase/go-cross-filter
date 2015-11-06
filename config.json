@@ -1,0 +1,172 @@
+{
+  "url": "http://atsd_server:8088",
+  "user": "username",
+  "password": "password",
+  "port": 8000,
+  "updatePeriod": "1m",
+  "tables": [
+    {
+      "name": "Linux Performance",
+      "entityGroups": ["nmon-linux", "nurswg-dc1", "nurswg-dc2"],
+      "sqlQuery": "SELECT entity,  entity.tags.os AS 'os',entity.tags.loc_area AS 'loc_area', entity.tags.app AS 'app', AVG(nmon.cpu_total.busy%.value) AS 'Cpu Busy, %', AVG(nmon.memory_mb.memused%.value) AS 'Memory Used, %', AVG(nmon.memory_mb.memfree.value) AS 'Memory Free, Mb', AVG(nmon.jfs_filespace_%used.value) AS 'FS used, %', nmon.jfs_filespace_%used.tags.id AS 'FS id' FROM nmon.cpu_total.busy% OUTER JOIN USING entity nmon.memory_mb.memused% OUTER JOIN USING entity nmon.memory_mb.memfree OUTER JOIN USING entity nmon.jfs_filespace_%used WHERE time > now - 1 * hour GROUP BY entity, tags, period(1 hour) WITH time > last_time - 1 * hour",
+      "portalConfigPath": "portals/linux_performance.config",
+      "columns": [
+        {
+          "name": "entity",
+          "entity": true
+        },
+        {
+          "name": "os",
+          "filter": true
+        },
+        {
+          "name": "loc_area",
+          "filter": true
+        },
+        {
+          "name": "app",
+          "filter": true
+        },
+        {
+          "name": "FS id",
+          "filter": true
+        },
+        {
+          "name": "Cpu Busy, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "Memory Used, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "Memory Free, Mb",
+          "filter": true,
+          "formatter": {
+            "round": 0
+          }
+        },
+        {
+          "name": "FS used, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Oracle Databases",
+      "entityGroups": ["Oracle DB - DR", "Oracle DB - QA", "Oracle DB - prod", "Oracle DBs"],
+      "sqlQuery": "SELECT entity,  entity.tags.environment AS 'environment',entity.tags.loc_area AS 'loc_area', entity.tags.db_version AS 'db_version', oem.oracle_database.wait_bottlenecks.host_cpu_utilization_%.value AS 'Host CPU Busy, %', oem.oracle_database.wait_bottlenecks.average_instance_cpu_%.value AS 'DB Instance CPU Busy, %',  oem.oracle_database.database_size.allocated_space_gb.value AS 'Space Allocated, Gb', oem.oracle_database.database_size.used_space_gb.value AS 'Space Used, Gb', oem.oracle_database.efficiency.buffer_cache_hit_%.value AS 'Cache Hit, %' FROM oem.oracle_database.wait_bottlenecks.host_cpu_utilization_% OUTER JOIN USING entity oem.oracle_database.wait_bottlenecks.average_instance_cpu_% OUTER JOIN USING entity oem.oracle_database.database_size.allocated_space_gb OUTER JOIN USING entity oem.oracle_database.database_size.used_space_gb OUTER JOIN USING entity oem.oracle_database.efficiency.buffer_cache_hit_% WHERE datetime between '2015-09-30T00:00:00Z' and '2015-10-01T00:00:00Z' WITH row_number(entity, tags order by time desc) <=1",
+      "portalConfigPath": "portals/oracle_databases.config",
+      "columns": [
+        {
+          "name": "entity",
+          "entity": true
+        },
+        {
+          "name": "environment",
+          "filter": true
+        },
+        {
+          "name": "loc_area",
+          "filter": true
+        },
+        {
+          "name": "db_version",
+          "filter": true
+        },
+        {
+          "name": "Host CPU Busy, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "DB Instance CPU Busy, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "Space Allocated, Gb",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "Space Used, Gb",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "Cache Hit, %",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Response Time",
+      "portalConfigPath": "portals/response_time.config",
+      "sqlQuery": "SELECT entity, entity.tags.geo AS 'geo', entity.tags.zone AS 'zone', AVG('rtt-response-time'.value) AS 'Avg Response Time, ms', LAST('rtt-count'.value) AS 'rtt-count', LAST('rtt-error-count'.value) AS 'rtt-error-count', LAST('rtt-error-percent'.value) AS 'rtt-error-percent' FROM 'rtt-response-time' OUTER JOIN USING entity 'rtt-count' OUTER JOIN USING entity 'rtt-error-count' OUTER JOIN USING entity 'rtt-error-percent' WHERE datetime between '2015-09-30T00:00:00Z' and '2015-10-01T00:00:00Z' GROUP BY entity, tags, period(15 minute) WITH row_number(entity, tags order by time desc) <=1",
+      "columns": [
+        {
+          "name": "entity",
+          "entity": true
+        },
+        {
+          "name": "geo",
+          "filter": true
+        },
+        {
+          "name": "zone",
+          "filter": true
+        },
+        {
+          "name": "Avg Response Time, ms",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "rtt-count",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "rtt-error-count",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        },
+        {
+          "name": "rtt-error-percent",
+          "filter": true,
+          "formatter": {
+            "round": 1
+          }
+        }
+      ]
+
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+	"ImportPath": "github.com/axibase/go-capacity-screener",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/axibase/atsd-api-go/http",
+			"Rev": "b1f6603f85a066d621fafc6b4daa804083e3cb68"
+		},
+		{
+			"ImportPath": "github.com/axibase/atsd-api-go/net",
+			"Rev": "b1f6603f85a066d621fafc6b4daa804083e3cb68"
+		},
+		{
+			"ImportPath": "github.com/golang/glog",
+			"Rev": "d1c4472bf2efd3826f2b5bdcc02d8416798d678c"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1c83b3eabd45b6d76072b66b746c20815fb2872d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "ad4d7a5882b961e07e2626045eb995c022ac6664"
+		}
+	]
+}
