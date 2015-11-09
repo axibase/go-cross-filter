@@ -1,7 +1,6 @@
 #Go Cross-filter
 
-This is a golang application which implementing [cross-filter concept](http://square.github.io/crossfilter/). It provides an ability to visual filtering a number of predefined datasets obtained from [Axibase Time Series Database](http://axibase.com/products/axibase-time-series-database/).
-All datasets are loaded from ATSD with **[SQL queries](https://axibase.com/atsd/api/#sql)** and updated with the **updatePeriod** period.
+This is a golang application that implements the [cross-filter concept](https://square.github.io/crossfilter/) on top of data stored in [Axibase Time Series Database](https://axibase.com/products/axibase-time-series-database/). It provides a capability to apply graphical filters to entity tags and time series retrieved from the database, without reloading the dataset on the client. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/atsd/api/#sql) and refreshed on schedule. [Cross-filter.js](https://square.github.io/crossfilter/) and [datatable](https://www.datatables.net/) are used to build and maintain indices for fast filterting on the client. We use pie and histogram charts from the ATSD widget library to display the filters.
 
 ## Getting Started
 
@@ -13,8 +12,8 @@ All datasets are loaded from ATSD with **[SQL queries](https://axibase.com/atsd/
 ### Install
 
 Navigate to your destination folder and execute the following commands:
-+
-+Load last version from github repository:
+
+Load last version from github repository:
 ```bash
 # Load last version from github repository
 go get github.com/axibase/go-capacity-screener
@@ -64,7 +63,7 @@ Define tables:
       "name": "Linux Performance",                                 #table name                               
       "entityGroups": ["nmon-linux", "nurswg-dc1", "nurswg-dc2"],  #which entity groups can be used to filter the table(dataset) 
       "sqlQuery": ATSD_SQL_QUERY,                                  #SQL query to load data from ATSD
-      "portalConfigPath": "portals/nmon.conf",                     #portal configuration file
+      "portalConfigPath": "portals/linux_performance.config",      #portal configuration file
       "columns": [                  #all column names should match aliases in sqlQuery.
         {
           "name": "entity",                  
@@ -104,7 +103,8 @@ Define tables:
           "name": "Memory Free, Mb",
           "filter": true,
           "formatter": {
-            "round": 0
+            "round": 0,
+            "multiplier": 0.00097656  #converting bytes to Mb
           }
         },
         {
