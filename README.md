@@ -5,6 +5,7 @@ This is a golang application that implements the [cross-filter concept](https://
 ## Dependencies
 
 Client:
+
 1. bootstrap v3.3.5
 2. jquery v2.1.4
 3. d3 v3.5.6
@@ -13,6 +14,7 @@ Client:
 6. crossfilter v1.3.12
 
 Server:
+
 1. ATSD rev. >=11130
 2. Go dependencies from Godeps.json  
 
