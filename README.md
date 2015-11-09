@@ -1,6 +1,6 @@
 #Go Cross-filter
 
-This is a golang application that implements the [cross-filter concept](https://square.github.io/crossfilter/) on top of data stored in [Axibase Time Series Database](https://axibase.com/products/axibase-time-series-database/). It provides a capability to apply graphical filters to entity tags and time series retrieved from the database, without reloading the dataset on the client. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/atsd/api/#sql) and refreshed on schedule. [Cross-filter.js](https://square.github.io/crossfilter/) and [datatable](https://www.datatables.net/) are used to build and maintain indices for fast filterting on the client. We use pie and histogram charts from the ATSD widget library to display the filters.
+This is a golang application that implements the [cross-filter concept](https://square.github.io/crossfilter/) on top of data stored in [Axibase Time Series Database](https://axibase.com/products/axibase-time-series-database/). It provides a capability to apply graphical filters to entity tags and time series retrieved from the database, without reloading the dataset on the client. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/atsd/api/#sql) and refreshed on schedule. [Cross-filter.js](https://square.github.io/crossfilter/) and [datatables](https://www.datatables.net/) are used to build and maintain indices for fast filterting on the client. We use pie and histogram charts from the ATSD widget library to display the filters.
 
 ## Getting Started
 
