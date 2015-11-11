@@ -23,28 +23,31 @@ import (
 	"fmt"
 	atsdHttp "github.com/axibase/atsd-api-go/http"
 	neturl "net/url"
-	"time"
 	"sort"
+	"time"
 )
 
 type TableConfig struct {
-	Name     string
-	SqlQuery string
+	Name         string
+	SqlQuery     string
+	EntityGroups []string
 }
 
 type TableService struct {
-	tables       map[string]*Table
-	tableConfigs []*TableConfig
-	client       *atsdHttp.Client
-	entityGroups []string
-	stop         chan bool
-	isUpdating   bool
+	tables           map[string]*Table
+	entitiesPerGroup map[string][]string
+	tableConfigs     []*TableConfig
+	client           *atsdHttp.Client
+	entityGroups     []string
+	stop             chan bool
+	isUpdating       bool
 }
 
 func NewTableService() *TableService {
 	return &TableService{
-		stop:   make(chan bool),
-		tables: map[string]*Table{},
+		stop:             make(chan bool),
+		tables:           map[string]*Table{},
+		entitiesPerGroup: map[string][]string{},
 	}
 }
 
@@ -52,7 +55,7 @@ func (self *TableService) Init(tableConfigs []*TableConfig, url neturl.URL, user
 	self.tableConfigs = tableConfigs
 	self.client = atsdHttp.New(url, username, password)
 	for _, table := range self.tables {
-		if (!Contains(table.Name, self.tableConfigs)) {
+		if !Contains(table.Name, self.tableConfigs) {
 			delete(self.tables, table.Name)
 		}
 	}
@@ -66,13 +69,13 @@ func Contains(tableName string, tableConfigs []*TableConfig) bool {
 	return false
 }
 
-
 func (self *TableService) StartUpdatingTables(UpdatePeriod time.Duration) {
 	if self.isUpdating {
 		panic("Error: service is already running")
 	}
 	self.isUpdating = true
 	for {
+		self.entitiesPerGroup = map[string][]string{}
 		fmt.Println("Updating tables...")
 		for _, tableConfig := range self.tableConfigs {
 			entityGroups, err := self.loadEntityGroups()
@@ -80,6 +83,12 @@ func (self *TableService) StartUpdatingTables(UpdatePeriod time.Duration) {
 				self.entityGroups = entityGroups
 			} else {
 				fmt.Println(err)
+			}
+			if len(tableConfig.EntityGroups) > 0 {
+				entityGroups = tableConfig.EntityGroups
+			}
+			for _, group := range entityGroups {
+				self.entitiesPerGroup[group] = self.loadEntitiesForGroup(group)
 			}
 			table, err := self.loadTable(tableConfig)
 			if err == nil && len(table.Rows) > 0 {
@@ -95,6 +104,18 @@ func (self *TableService) StartUpdatingTables(UpdatePeriod time.Duration) {
 			return
 		}
 	}
+}
+
+func (self *TableService) loadEntitiesForGroup(entityGroup string) []string {
+	entities, err := self.client.EntityGroups.EntitiesList(entityGroup, "", nil, 0)
+	if err != nil {
+		fmt.Println(err)
+	}
+	entityNames := []string{}
+	for _, entity := range entities {
+		entityNames = append(entityNames, entity.Name())
+	}
+	return entityNames
 }
 
 func (self *TableService) StopUpdatingService() {
@@ -124,10 +145,10 @@ func (self *TableService) loadTable(tableConfig *TableConfig) (*Table, error) {
 		return nil, err
 	}
 	table := &Table{
-		Name:    tableConfig.Name,
-		UpdateTime:    time.Now(),
-		Columns: []*Column{},
-		Rows:    [][]string{},
+		Name:       tableConfig.Name,
+		UpdateTime: time.Now(),
+		Columns:    []*Column{},
+		Rows:       [][]string{},
 	}
 	for _, responseCol := range responseTable.Columns {
 		table.Columns = append(table.Columns, &Column{
@@ -171,14 +192,5 @@ func (self *TableService) GetEntityGroups() []string {
 	return self.entityGroups
 }
 func (self *TableService) GetGroupEntities(entityGroup string) []string {
-	entities, err := self.client.EntityGroups.EntitiesList(entityGroup, "", nil, 0)
-	if err != nil {
-		fmt.Println(err)
-	}
-	entityNames := []string{}
-	for _, entity := range entities {
-		entityNames = append(entityNames, entity.Name())
-	}
-
-	return entityNames
+	return self.entitiesPerGroup[entityGroup]
 }

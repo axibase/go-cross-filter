@@ -20,9 +20,9 @@ package application
 
 import (
 	"github.com/gorilla/mux"
+	"net"
 	"net/http"
 	"strconv"
-	"net"
 )
 
 type Web struct {
@@ -30,7 +30,7 @@ type Web struct {
 	server *http.Server
 
 	portListener net.Listener
-	isListening bool
+	isListening  bool
 }
 
 func NewWeb() *Web {
@@ -41,10 +41,10 @@ func NewWeb() *Web {
 
 func (self *Web) Serve(port uint) error {
 	if self.isListening {
-		panic("Error server is already listenning on "+ self.server.Addr)
+		panic("Error server is already listenning on " + self.server.Addr)
 	}
 	ln, err := net.Listen("tcp", ":"+strconv.FormatUint(uint64(port), 10))
-	if err!=nil {
+	if err != nil {
 		return err
 	}
 	self.portListener = ln

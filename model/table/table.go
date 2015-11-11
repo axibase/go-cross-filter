@@ -23,10 +23,10 @@ import (
 )
 
 type Table struct {
-	Name    string
+	Name       string
 	UpdateTime time.Time
-	Columns []*Column
-	Rows    [][]string
+	Columns    []*Column
+	Rows       [][]string
 }
 
 type Column struct {
