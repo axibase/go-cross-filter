@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type"  content="text/html; charset=UTF8">
-    <title>Capacity Screener</title>
+    <title>Cross-filter</title>
     <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
