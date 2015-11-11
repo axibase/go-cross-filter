@@ -8,7 +8,7 @@
     {
       "name": "Linux Performance",
       "entityGroups": ["nmon-linux", "nurswg-dc1", "nurswg-dc2"],
-      "sqlQuery": "SELECT entity,  entity.tags.os AS 'os',entity.tags.loc_area AS 'loc_area', entity.tags.app AS 'app', AVG(nmon.cpu_total.busy%.value) AS 'Cpu Busy, %', AVG(nmon.memory_mb.memused%.value) AS 'Memory Used, %', AVG(nmon.memory_mb.memfree.value) AS 'Memory Free, Mb', AVG(nmon.jfs_filespace_%used.value) AS 'FS used, %', nmon.jfs_filespace_%used.tags.id AS 'FS id' FROM nmon.cpu_total.busy% OUTER JOIN USING entity nmon.memory_mb.memused% OUTER JOIN USING entity nmon.memory_mb.memfree OUTER JOIN USING entity nmon.jfs_filespace_%used WHERE time > now - 1 * hour GROUP BY entity, tags, period(1 hour) WITH time > last_time - 1 * hour",
+      "sqlQuery": "SELECT entity,  entity.tags.os AS 'os',entity.tags.loc_area AS 'loc_area', entity.tags.app AS 'app', AVG(nmon.cpu_total.busy%.value) AS 'Cpu Busy, %', AVG(nmon.memory_mb.memused%.value) AS 'Memory Used, %', AVG(nmon.memory_mb.memfree.value) AS 'Memory Free, Mb', AVG(nmon.jfs_filespace_%used.value) AS 'FS used, %', nmon.jfs_filespace_%used.tags.id AS 'FS id' FROM nmon.cpu_total.busy% OUTER JOIN USING entity nmon.memory_mb.memused% OUTER JOIN USING entity nmon.memory_mb.memfree OUTER JOIN USING entity nmon.jfs_filespace_%used WHERE time > now - 1 * hour GROUP BY entity, tags, period(1 hour) WITH time > last_time - 1 * hour, row_number(entity, tags ORDER BY time DESC) <= 1",
       "portalConfigPath": "portals/linux_performance.config",
       "columns": [
         {
