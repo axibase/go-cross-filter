@@ -105,7 +105,7 @@
 <div class="container">
     <div class="row page-header">
         <div class="col-xs-6 page-header__title">
-            <h3><span>Capacity Screener</span><button class="btn btn-default btn-xs reset-btn reset-btn_hidden" >Reset All</button></h3>
+            <h3><span>Cross-filter</span><button class="btn btn-default btn-xs reset-btn reset-btn_hidden" >Reset All</button></h3>
         </div><div class="clearfix visible-xs-block"></div><!--
         --><div class="col-xs-12 col-sm-6 menu">
         <div class="dropdown menu__entity-group-list menu-button">
@@ -711,7 +711,12 @@
                         obj[col.label] = +el[i];
                         obj[col.label] = (isNaN(obj[col.label])) ? -1: obj[col.label];
                     } else {
-                        obj[col.label] = el[i];
+                        if (el[i] == "null") {
+                            obj[col.label] = "-";
+                        } else {
+                            obj[col.label] = el[i];
+                        }
+
                     }
 
                 });
