@@ -17,44 +17,50 @@
         },
         {
           "name": "os",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "loc_area",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "app",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "FS id",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "Cpu Busy, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Memory Used, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Memory Free, Mb",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 0
           }
         },
         {
           "name": "FS used, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
@@ -73,47 +79,53 @@
         },
         {
           "name": "environment",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "loc_area",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "db_version",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "Host CPU Busy, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "DB Instance CPU Busy, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Space Allocated, Gb",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Space Used, Gb",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Cache Hit, %",
-          "filter": true,
+          "filter": {
+            "range": [0, 100]
+          },
           "formatter": {
             "round": 1
           }
@@ -131,36 +143,36 @@
         },
         {
           "name": "geo",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "zone",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "Avg Response Time, ms",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "rtt-count",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "rtt-error-count",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "rtt-error-percent",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 1
           }

@@ -264,6 +264,7 @@
                 type: 'histogram',
                 script: 'config.url = null',
                 timezone: 'UTC',
+                barcount: 20,
                 minrangeforce: config.minrangeforce,
                 maxrangeforce: config.maxrangeforce,
                 rangeoffset: config.rangeoffset,
@@ -565,13 +566,14 @@
             filterManager.setData(data);
             var i = 0, j = 0;
             json.columns.forEach(function (el) {
-                if (el.filter) {
+                if (el.filter !== undefined) {
                     if (el.numeric) {
                         hists.push({
                             id: "hist-" + i,
                             chartHeader: el.label,
                             vKey: el.label,
-                            dimKey: el.label
+                            dimKey: el.label,
+                            range: el.filter.range
                         });
                         i++;
                     } else {
@@ -688,11 +690,11 @@
                     }
                 });
                 el.unshift(createPortalLink(table, row));
-            })
+            });
             columns.unshift({
                 label: link,
                 _type: "link"
-            })
+            });
         }
         function createPortalLink(table, row) {
             var keys = d3.keys(row);
@@ -785,7 +787,12 @@
             histDivs.exit().remove();
             //for each div setup hist widget
             hists.forEach(function (el, i) {
-                el.widget = screener.HistChart({id: el.id, rangeoffset: 15});
+                var minrangeforce, maxrangeforce;
+                if (el.range) {
+                    minrangeforce = el.range[0];
+                    maxrangeforce = el.range[1];
+                }
+                el.widget = screener.HistChart({id: el.id, rangeoffset: 15, minrangeforce: minrangeforce, maxrangeforce: maxrangeforce});
                 d3.select("#"+el.id+" .reset").on("click", function() { el.widget.resetSelection(); });
                 el.widget
                         .on("rangeselectend", function() {d3.select("#"+el.id+" .reset").classed("reset_hidden", false)})

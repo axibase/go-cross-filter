@@ -2,6 +2,7 @@
 
 This is a golang application that implements the [cross-filter concept](https://square.github.io/crossfilter/) on top of data stored in [Axibase Time Series Database](https://axibase.com/products/axibase-time-series-database/). It provides a capability to apply graphical filters to entity tags and time series retrieved from the database, without reloading the dataset on the client. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/atsd/api/#sql) and refreshed on schedule. [Cross-filter.js](https://square.github.io/crossfilter/) and [datatables](https://www.datatables.net/) are used to build and maintain indices for fast filterting on the client. We use pie and histogram charts from the ATSD widget library to display the filters.
 
+Try it [here](http://apps.axibase.com/cross-filter).
 ## Dependencies
 
 Client:
@@ -88,37 +89,41 @@ Define tables:
         },
         {
           "name": "os",             
-          "filter": true            #filter flag to use column for a visual filtering.
+          "filter": {}            #filter object to use column for a visual filtering.
         },
         {
           "name": "loc_area",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "app",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "FS id",
-          "filter": true
+          "filter": {}
         },
         {
           "name": "Cpu Busy, %",
-          "filter": true,
+          "filter": {
+            range: [0, 100]         #range option to set histogram range for numeric columns
+          },
           "formatter": {            #specify formatter for numeric columns to render column value based on formula (round(multiplier * value)) 
             "round": 1              #you can specify "round" and "multiplier" independently. 
           }                         
         },
         {
           "name": "Memory Used, %",
-          "filter": true,
+          "filter": {
+            range: [0, 100]
+          },
           "formatter": {
             "round": 1
           }
         },
         {
           "name": "Memory Free, Mb",
-          "filter": true,
+          "filter": {},
           "formatter": {
             "round": 0,
             "multiplier": 0.00097656  #converting bytes to Mb
@@ -126,7 +131,9 @@ Define tables:
         },
         {
           "name": "FS used, %",
-          "filter": true,
+          "filter": {
+            range: [0, 100]
+          },
           "formatter": {
             "round": 1
           }
