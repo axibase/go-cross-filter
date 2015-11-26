@@ -24,7 +24,18 @@ import (
 	atsdHttp "github.com/axibase/atsd-api-go/http"
 	neturl "net/url"
 	"sort"
+	"strings"
 	"time"
+)
+
+var (
+	NUMERIC_TYPES = []string{
+		"short",
+		"integer",
+		"long",
+		"float",
+		"double",
+	}
 )
 
 type TableConfig struct {
@@ -150,14 +161,31 @@ func (self *TableService) loadTable(tableConfig *TableConfig) (*Table, error) {
 		Columns:    []*Column{},
 		Rows:       [][]string{},
 	}
-	for _, responseCol := range responseTable.Columns {
-		table.Columns = append(table.Columns, &Column{
-			Name:    responseCol.Name,
-			Label:   responseCol.Label,
-			Numeric: responseCol.Numeric,
-		})
+	if meta, ok := responseTable.Metadata.(map[string]interface{}); ok {
+		if schema, ok := meta["tableSchema"].(map[string]interface{}); ok {
+			if columns, ok := schema["columns"].([]interface{}); ok {
+				for _, responseCol := range columns {
+					if c, ok := responseCol.(map[string]interface{}); ok {
+						table.Columns = append(table.Columns, &Column{
+							Name:    c["titles"].(string),
+							Label:   c["name"].(string),
+							Numeric: stringInSlice(c["datatype"].(string), NUMERIC_TYPES),
+						})
+					} else {
+						fmt.Println("Col object not found")
+					}
+				}
+			} else {
+				fmt.Println("Columns not found")
+			}
+		} else {
+			fmt.Println("Schema not found")
+		}
+	} else {
+		fmt.Println("Meta not found")
 	}
-	for _, responseRow := range responseTable.Rows {
+
+	for _, responseRow := range responseTable.Data {
 		row := []string{}
 		for _, responseCell := range responseRow {
 			switch c := responseCell.(type) {
@@ -193,4 +221,12 @@ func (self *TableService) GetEntityGroups() []string {
 }
 func (self *TableService) GetGroupEntities(entityGroup string) []string {
 	return self.entitiesPerGroup[entityGroup]
+}
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if strings.ToLower(b) == strings.ToLower(a) {
+			return true
+		}
+	}
+	return false
 }

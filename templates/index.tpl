@@ -171,7 +171,6 @@
             axibaseCharts.EventListener(chart);
 
             var widgetConfig = {
-//                initSize: {width: 280, height: 300},
                 type: 'pie',
                 script: 'config.url = null',
                 timezone: 'UTC',
