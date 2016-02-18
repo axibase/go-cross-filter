@@ -1,14 +1,14 @@
 {
-	"ImportPath": "github.com/axibase/go-capacity-screener",
+	"ImportPath": "github.com/axibase/go-cross-filter",
 	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
 			"ImportPath": "github.com/axibase/atsd-api-go/http",
-			"Rev": "5bfa14d165ae69e9153a8492ad593cc6ab93f43f"
+			"Rev": "a1375e99813442245c21e4ce8c7cd88da14307ff"
 		},
 		{
 			"ImportPath": "github.com/axibase/atsd-api-go/net",
-			"Rev": "5bfa14d165ae69e9153a8492ad593cc6ab93f43f"
+			"Rev": "a1375e99813442245c21e4ce8c7cd88da14307ff"
 		},
 		{
 			"ImportPath": "github.com/golang/glog",

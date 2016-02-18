@@ -42,7 +42,7 @@ const (
 	metricsPath = "/api/v1/metrics"
 	commandPath = "/api/v1/command"
 
-	sql = "/sql"
+	sql = "/api/sql"
 )
 
 type Client struct {
