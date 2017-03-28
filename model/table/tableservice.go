@@ -21,11 +21,12 @@ package table
 import (
 	"encoding/json"
 	"fmt"
-	atsdHttp "github.com/axibase/atsd-api-go/http"
 	neturl "net/url"
 	"sort"
 	"strings"
 	"time"
+
+	atsdHttp "github.com/axibase/atsd-api-go/http"
 )
 
 var (
@@ -62,9 +63,9 @@ func NewTableService() *TableService {
 	}
 }
 
-func (self *TableService) Init(tableConfigs []*TableConfig, url neturl.URL, username, password string) {
+func (self *TableService) Init(tableConfigs []*TableConfig, url neturl.URL) {
 	self.tableConfigs = tableConfigs
-	self.client = atsdHttp.New(url, username, password)
+	self.client = atsdHttp.New(url, true)
 	for _, table := range self.tables {
 		if !Contains(table.Name, self.tableConfigs) {
 			delete(self.tables, table.Name)

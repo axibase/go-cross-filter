@@ -19,10 +19,11 @@
 package application
 
 import (
-	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type Web struct {

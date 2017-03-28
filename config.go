@@ -26,6 +26,71 @@ import (
 	"time"
 )
 
+type Config struct {
+	Url          Url
+	Port         uint
+	UpdatePeriod Duration
+	TableConfigs []*TableConfig
+}
+
+type TableConfig struct {
+	Name             	string
+	UseEntityGroupFilter 	bool
+	SqlQuery       		string
+	EntityGroups     	[]string
+	PortalConfigPath 	string
+	ColumnsConfig    	[]map[string]interface{}
+}
+
+type ConfigDto struct {
+	Url          Url            `json:"url"`
+	Port         uint           `json:"port"`
+	UpdatePeriod Duration       `json:"updatePeriod"`
+	TableConfigs []*TableConfigDto `json:"tables"`
+}
+
+type TableConfigDto struct {
+	Name             	string                   `json:"name"`
+	UseEntityGroupFilter 	bool			 `json:"useEntityGroupFilter"`
+	MultilineSqlQuery       []string                 `json:"sqlQuery"`
+	EntityGroups     	[]string                 `json:"entityGroups"`
+	PortalConfigPath 	string                   `json:"PortalConfigPath"`
+	ColumnsConfig    	[]map[string]interface{} `json:"columns"`
+}
+
+func (self *Config) UnmarshalJSON(data []byte) error {
+	var configDto ConfigDto
+	var err = json.Unmarshal(data, &configDto)
+	if err != nil {
+		return err
+	}
+
+	var config Config
+	config.Password = configDto.Password
+	config.Port = configDto.Port
+	config.UpdatePeriod = configDto.UpdatePeriod
+
+	var tableConfigs = make([]*TableConfig, len(configDto.TableConfigs))
+	for i := 0; i < len(configDto.TableConfigs); i++ {
+		tableConfig := new(TableConfig)
+		var tableConfigDto = configDto.TableConfigs[i]
+
+		tableConfig.Name = tableConfigDto.Name
+		tableConfig.UseEntityGroupFilter = tableConfigDto.UseEntityGroupFilter
+		tableConfig.SqlQuery = strings.Join(tableConfigDto.MultilineSqlQuery, "\n")
+		tableConfig.EntityGroups = tableConfigDto.EntityGroups
+		tableConfig.PortalConfigPath = tableConfigDto.PortalConfigPath
+		tableConfig.ColumnsConfig = tableConfigDto.ColumnsConfig
+
+		tableConfigs[i] = tableConfig
+	}
+
+	config.TableConfigs = tableConfigs
+
+	*self = config;
+	return nil
+}
+
 type Url neturl.URL
 
 func (self *Url) UnmarshalJSON(data []byte) error {
@@ -40,15 +105,6 @@ func (self *Url) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-type Config struct {
-	Url          Url            `json:"url"`
-	User         string         `json:"user"`
-	Password     string         `json:"password"`
-	Port         uint           `json:"port"`
-	UpdatePeriod Duration       `json:"updatePeriod"`
-	TableConfigs []*TableConfig `json:"tables"`
-}
-
 type Duration time.Duration
 
 func (self *Duration) UnmarshalJSON(input []byte) error {
@@ -61,11 +117,4 @@ func (self *Duration) UnmarshalJSON(input []byte) error {
 	return nil
 }
 
-type TableConfig struct {
-	Name                 string                   `json:"name"`
-	UseEntityGroupFilter bool                     `json:"useEntityGroupFilter"`
-	MultilineSqlQuery    []string                 `json:"sqlQuery"`
-	EntityGroups         []string                 `json:"entityGroups"`
-	PortalConfigPath     string                   `json:"PortalConfigPath"`
-	ColumnsConfig        []map[string]interface{} `json:"columns"`
-}
+

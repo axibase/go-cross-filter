@@ -21,12 +21,12 @@ package main
 import (
 	"net/http"
 	"text/template"
-
 	"encoding/json"
 	"fmt"
-	ts "github.com/axibase/go-cross-filter/model/table"
 	"io/ioutil"
 	"time"
+
+	ts "github.com/axibase/go-cross-filter/model/table"
 )
 
 func PortalView(query string, w http.ResponseWriter) {

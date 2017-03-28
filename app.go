@@ -19,11 +19,12 @@
 package main
 
 import (
-	table "github.com/axibase/go-cross-filter/model/table"
-	web "github.com/axibase/go-cross-filter/web"
 	neturl "net/url"
 	"strings"
 	"time"
+
+	table "github.com/axibase/go-cross-filter/model/table"
+	web "github.com/axibase/go-cross-filter/web"
 )
 
 var app *App
@@ -73,7 +74,7 @@ func (self *App) Init(config *Config) {
 			SqlQuery: strings.Join(tableConfig.MultilineSqlQuery, "\n"),
 		})
 	}
-	self.TableService.Init(tableConfigs, neturl.URL(config.Url), config.User, config.Password)
+	self.TableService.Init(tableConfigs, neturl.URL(config.Url))
 	app.web.ResetHandlers()
 	app.web.Register("/", &TableController{})
 	app.web.Register("/", NewPortalController(neturl.URL(config.Url)))
