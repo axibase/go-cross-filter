@@ -22,8 +22,8 @@ import (
 	table "github.com/axibase/go-cross-filter/model/table"
 	web "github.com/axibase/go-cross-filter/web"
 	neturl "net/url"
-	"time"
 	"strings"
+	"time"
 )
 
 var app *App
@@ -69,8 +69,8 @@ func (self *App) Init(config *Config) {
 	tableConfigs := []*table.TableConfig{}
 	for _, tableConfig := range config.TableConfigs {
 		tableConfigs = append(tableConfigs, &table.TableConfig{
-			Name:     		tableConfig.Name,
-			SqlQuery: 		strings.Join(tableConfig.MultilineSqlQuery, "\n"),
+			Name:     tableConfig.Name,
+			SqlQuery: strings.Join(tableConfig.MultilineSqlQuery, "\n"),
 		})
 	}
 	self.TableService.Init(tableConfigs, neturl.URL(config.Url), config.User, config.Password)

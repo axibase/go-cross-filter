@@ -62,10 +62,10 @@ func (self *Duration) UnmarshalJSON(input []byte) error {
 }
 
 type TableConfig struct {
-	Name             	string                   `json:"name"`
-	UseEntityGroupFilter 	bool			 `json:"useEntityGroupFilter"`
-	MultilineSqlQuery       []string                 `json:"sqlQuery"`
-	EntityGroups     	[]string                 `json:"entityGroups"`
-	PortalConfigPath 	string                   `json:"PortalConfigPath"`
-	ColumnsConfig    	[]map[string]interface{} `json:"columns"`
+	Name                 string                   `json:"name"`
+	UseEntityGroupFilter bool                     `json:"useEntityGroupFilter"`
+	MultilineSqlQuery    []string                 `json:"sqlQuery"`
+	EntityGroups         []string                 `json:"entityGroups"`
+	PortalConfigPath     string                   `json:"PortalConfigPath"`
+	ColumnsConfig        []map[string]interface{} `json:"columns"`
 }
