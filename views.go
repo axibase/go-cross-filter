@@ -91,10 +91,11 @@ func IndexView(w http.ResponseWriter) {
 }
 
 type Table struct {
-	Name       string                   `json:"name"`
-	UpdateTime time.Time                `json:"updateTime"`
-	Columns    []map[string]interface{} `json:"columns"`
-	Rows       [][]string               `json:"rows"`
+	Name       		string                   	`json:"name"`
+	UpdateTime 		time.Time                	`json:"updateTime"`
+	UseEntityGroupFilter 	bool				`json:"useEntityGroupFilter"`
+	Columns    		[]map[string]interface{} 	`json:"columns"`
+	Rows       		[][]string               	`json:"rows"`
 }
 
 func TableView(table, entityGroup string, w http.ResponseWriter) {
@@ -123,9 +124,10 @@ func TableView(table, entityGroup string, w http.ResponseWriter) {
 }
 func convertToTable(table *ts.Table, tableConfig *TableConfig) *Table {
 	newTable := &Table{
-		Name:       table.Name,
-		UpdateTime: table.UpdateTime,
-		Rows:       table.Rows,
+		Name:       		table.Name,
+		UseEntityGroupFilter: 	tableConfig.UseEntityGroupFilter,
+		UpdateTime: 		table.UpdateTime,
+		Rows:       		table.Rows,
 	}
 	for _, col := range table.Columns {
 		column := map[string]interface{}{}
