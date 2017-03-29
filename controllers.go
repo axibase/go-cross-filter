@@ -20,11 +20,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httputil"
 	neturl "net/url"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 type PortalController struct {

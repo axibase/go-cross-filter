@@ -19,21 +19,20 @@
 package main
 
 import (
-	table "github.com/axibase/go-cross-filter/model/table"
-	web "github.com/axibase/go-cross-filter/web"
 	neturl "net/url"
 	"time"
+
+	table "github.com/axibase/go-cross-filter/model/table"
+	web "github.com/axibase/go-cross-filter/web"
 )
 
 var app *App
 var defaultConfig *Config
 
 func init() {
-	url, _ := neturl.Parse("http://localhost:8088")
+	url, _ := neturl.Parse("http://admin:admin@localhost:8088")
 	defaultConfig = &Config{
 		Url:          Url(*url),
-		User:         "admin",
-		Password:     "admin",
 		UpdatePeriod: Duration(1 * time.Minute),
 		Port:         8000,
 		TableConfigs: []*TableConfig{},
@@ -68,11 +67,11 @@ func (self *App) Init(config *Config) {
 	tableConfigs := []*table.TableConfig{}
 	for _, tableConfig := range config.TableConfigs {
 		tableConfigs = append(tableConfigs, &table.TableConfig{
-			Name:     tableConfig.Name,
-			SqlQuery: tableConfig.SqlQuery,
+			Name:     		tableConfig.Name,
+			SqlQuery: 		tableConfig.SqlQuery,
 		})
 	}
-	self.TableService.Init(tableConfigs, neturl.URL(config.Url), config.User, config.Password)
+	self.TableService.Init(tableConfigs, neturl.URL(config.Url))
 	app.web.ResetHandlers()
 	app.web.Register("/", &TableController{})
 	app.web.Register("/", NewPortalController(neturl.URL(config.Url)))
@@ -101,3 +100,4 @@ func (self *App) Stop() {
 func (self *App) IsRunning() bool {
 	return self.isRunning
 }
+

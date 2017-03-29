@@ -334,6 +334,14 @@
             setTitle: function (text) {
                 d3.select(".page-header .page-header__title span").text(text);
             },
+            setEntityGroupFilterVisibility: function(useEntityGroupFilter) {
+                var el = d3.select(".menu__entity-group-list button");
+                if (useEntityGroupFilter) {
+                        el.style("display", "inline")
+                } else {
+                        el.style("display", "none")
+                };
+            },
             setEntityGroupsList: function(entityGroups) {
                 entityGroups = ["all"].concat(entityGroups);
                 var list = d3.select(".menu__entity-group-list ul").selectAll("li").data(entityGroups, function(x) {return x}).attr();
@@ -556,6 +564,7 @@
             clearPage();
         }
         pageHeader.setTitle(json.name);
+        pageHeader.setEntityGroupFilterVisibility(json.useEntityGroupFilter);
 
         if (json.rows.length > 0) {
             appendPortalLinkToColumnsAndRows(json.name, json.columns, json.rows);

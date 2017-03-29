@@ -19,52 +19,57 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	neturl "net/url"
 	"strings"
-	"time"
 )
 
-type Url neturl.URL
-
-func (self *Url) UnmarshalJSON(data []byte) error {
-	var url string
-	dec := json.NewDecoder(bytes.NewReader(data))
-	dec.UseNumber()
-	if err := dec.Decode(&url); err != nil {
-		return err
-	}
-	url1, err := neturl.Parse(url)
-	*self = Url(*url1)
-	return err
-}
-
 type Config struct {
-	Url          Url            `json:"url"`
-	User         string         `json:"user"`
-	Password     string         `json:"password"`
-	Port         uint           `json:"port"`
-	UpdatePeriod Duration       `json:"updatePeriod"`
-	TableConfigs []*TableConfig `json:"tables"`
-}
-
-type Duration time.Duration
-
-func (self *Duration) UnmarshalJSON(input []byte) error {
-	str := strings.Trim(string(input), "\"")
-	dur, err := time.ParseDuration(str)
-	if err != nil {
-		return err
-	}
-	*self = Duration(dur)
-	return nil
+	Url          Url
+	Port         uint
+	UpdatePeriod Duration
+	TableConfigs []*TableConfig
 }
 
 type TableConfig struct {
-	Name             string                   `json:"name"`
-	SqlQuery         string                   `json:"sqlQuery"`
-	EntityGroups     []string                 `json:"entityGroups"`
-	PortalConfigPath string                   `json:"PortalConfigPath"`
-	ColumnsConfig    []map[string]interface{} `json:"columns"`
+	Name             	string
+	UseEntityGroupFilter 	bool
+	SqlQuery       		string
+	EntityGroups     	[]string
+	PortalConfigPath 	string
+	ColumnsConfig    	[]map[string]interface{}
 }
+
+func (self *Config) UnmarshalJSON(data []byte) error {
+	var jsonConfig JsonConfig
+	var err = json.Unmarshal(data, &jsonConfig)
+	if err != nil {
+		return err
+	}
+
+	var config Config
+	config.Url = jsonConfig.Url
+	config.Port = jsonConfig.Port
+	config.UpdatePeriod = jsonConfig.UpdatePeriod
+
+	var tableConfigs = make([]*TableConfig, len(jsonConfig.TableConfigs))
+	for i := 0; i < len(jsonConfig.TableConfigs); i++ {
+		tableConfig := new(TableConfig)
+		var jsonTableConfig = jsonConfig.TableConfigs[i]
+
+		tableConfig.Name = jsonTableConfig.Name
+		tableConfig.UseEntityGroupFilter = jsonTableConfig.UseEntityGroupFilter
+		tableConfig.SqlQuery = strings.Join(jsonTableConfig.MultilineSqlQuery, "\n")
+		tableConfig.EntityGroups = jsonTableConfig.EntityGroups
+		tableConfig.PortalConfigPath = jsonTableConfig.PortalConfigPath
+		tableConfig.ColumnsConfig = jsonTableConfig.ColumnsConfig
+
+		tableConfigs[i] = tableConfig
+	}
+
+	config.TableConfigs = tableConfigs
+
+	*self = config;
+	return nil
+}
+
+

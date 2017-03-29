@@ -4,11 +4,11 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/axibase/atsd-api-go/http",
-			"Rev": "a1375e99813442245c21e4ce8c7cd88da14307ff"
+			"Rev": "097a2e131a8bffd25b620b0b2c25d03716331497"
 		},
 		{
 			"ImportPath": "github.com/axibase/atsd-api-go/net",
-			"Rev": "a1375e99813442245c21e4ce8c7cd88da14307ff"
+			"Rev": "097a2e131a8bffd25b620b0b2c25d03716331497"
 		},
 		{
 			"ImportPath": "github.com/golang/glog",
