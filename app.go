@@ -20,7 +20,6 @@ package main
 
 import (
 	neturl "net/url"
-	"strings"
 	"time"
 
 	table "github.com/axibase/go-cross-filter/model/table"
@@ -31,11 +30,9 @@ var app *App
 var defaultConfig *Config
 
 func init() {
-	url, _ := neturl.Parse("http://localhost:8088")
+	url, _ := neturl.Parse("http://admin:admin@localhost:8088")
 	defaultConfig = &Config{
 		Url:          Url(*url),
-		User:         "admin",
-		Password:     "admin",
 		UpdatePeriod: Duration(1 * time.Minute),
 		Port:         8000,
 		TableConfigs: []*TableConfig{},
@@ -70,8 +67,8 @@ func (self *App) Init(config *Config) {
 	tableConfigs := []*table.TableConfig{}
 	for _, tableConfig := range config.TableConfigs {
 		tableConfigs = append(tableConfigs, &table.TableConfig{
-			Name:     tableConfig.Name,
-			SqlQuery: strings.Join(tableConfig.MultilineSqlQuery, "\n"),
+			Name:     		tableConfig.Name,
+			SqlQuery: 		tableConfig.SqlQuery,
 		})
 	}
 	self.TableService.Init(tableConfigs, neturl.URL(config.Url))
@@ -103,3 +100,4 @@ func (self *App) Stop() {
 func (self *App) IsRunning() bool {
 	return self.isRunning
 }
+
