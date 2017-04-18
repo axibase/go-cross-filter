@@ -1,7 +1,7 @@
 {
-  "url": "http://username:password@atsd_server:8088",
-  "port": 8000,
-  "updatePeriod": "1m",
+  "url": "https://username:password@localhost:8443",
+  "port": 9000,
+  "updatePeriod": "6h",
   "tables": [
     {
       "name": "Linux Performance",
@@ -9,20 +9,22 @@
       "entityGroups": ["nmon-linux", "nurswg-dc1", "nurswg-dc2"],
       "sqlQuery": [
 	"SELECT ",
-		"entity,",
-		"entity.tags.os AS 'os',",
-		"entity.tags.loc_area AS 'loc_area',",
-		"entity.tags.app AS 'app',",
+		"m.entity AS 'entity',",
+		"m.entity.tags.os AS 'os',",
+		"m.entity.tags.loc_area AS 'loc_area',",
+		"m.entity.tags.app AS 'app',",
 		"AVG(nmon.cpu_total.busy%.value) AS 'Cpu Busy, %',",
 		"AVG(nmon.memory_mb.memused%.value) AS 'Memory Used, %',",
 		"AVG(nmon.memory_mb.memfree.value) AS 'Memory Free, Mb',",
 		"AVG(nmon.jfs_filespace_%used.value) AS 'FS used, %',",
 		"nmon.jfs_filespace_%used.tags.id AS 'FS id' ",
-	"FROM nmon.cpu_total.busy% ",
+	"FROM nmon.cpu_total.busy% m ",
 	"OUTER JOIN USING entity nmon.memory_mb.memused% ",
 	"OUTER JOIN USING entity nmon.memory_mb.memfree ",
 	"OUTER JOIN USING entity nmon.jfs_filespace_%used ",
-	"WHERE time > now - 1 * hour GROUP BY entity, tags, period(1 hour) WITH time > last_time - 1 * hour, row_number(entity, tags ORDER BY time DESC) <= 1"
+	"WHERE m.time > now - 1 * hour ",
+    	"GROUP BY m.entity, m.tags, m.period(1 hour) ",
+    	"WITH time > last_time - 1 * hour, row_number(m.entity, m.tags ORDER BY m.time DESC) <= 1"
 	],
       "portalConfigPath": "portals/linux_performance.config",
       "columns": [
@@ -89,21 +91,21 @@
       "entityGroups": ["Oracle DB - DR", "Oracle DB - QA", "Oracle DB - prod", "Oracle DBs"],
       "sqlQuery": [
 	"SELECT ",
- 		"entity,",
-		"entity.tags.environment AS 'environment',",
-		"entity.tags.loc_area AS 'loc_area',",
-		"entity.tags.db_version AS 'db_version',",
+ 		"m.entity AS 'entity',",
+		"m.entity.tags.environment AS 'environment',",
+		"m.entity.tags.loc_area AS 'loc_area',",
+		"m.entity.tags.db_version AS 'db_version',",
 		"oem.oracle_database.wait_bottlenecks.host_cpu_utilization_%.value AS 'Host CPU Busy, %',",
 		"oem.oracle_database.wait_bottlenecks.average_instance_cpu_%.value AS 'DB Instance CPU Busy, %',",
 		"oem.oracle_database.database_size.allocated_space_gb.value AS 'Space Allocated, Gb',",
 		"oem.oracle_database.database_size.used_space_gb.value AS 'Space Used, Gb',",
 		"oem.oracle_database.efficiency.buffer_cache_hit_%.value AS 'Cache Hit, %' ",
-	"FROM oem.oracle_database.wait_bottlenecks.host_cpu_utilization_% ",
+	"FROM oem.oracle_database.wait_bottlenecks.host_cpu_utilization_% m",
 	"OUTER JOIN USING entity oem.oracle_database.wait_bottlenecks.average_instance_cpu_% ",
 	"OUTER JOIN USING entity oem.oracle_database.database_size.allocated_space_gb ",
 	"OUTER JOIN USING entity oem.oracle_database.database_size.used_space_gb ",
 	"OUTER JOIN USING entity oem.oracle_database.efficiency.buffer_cache_hit_% ",
-	"WHERE datetime between '2015-09-30T00:00:00Z' and '2015-10-01T00:00:00Z' WITH row_number(entity, tags order by time desc) <=1"
+	"WHERE m.datetime between '2015-10-31T00:00:00Z' and '2015-10-31T23:59:00Z' WITH row_number(m.entity, m.tags order by m.time desc) <=1"
 	],
       "columns": [
         {
@@ -171,19 +173,19 @@
       "portalConfigPath": "portals/response_time.config",
       "sqlQuery": [
 	"SELECT ",
-		"entity,",
-		"entity.tags.geo AS 'geo',",
-		"entity.tags.zone AS 'zone',",
+		"m.entity AS 'entity',",
+		"m.entity.tags.geo AS 'geo',",
+		"m.entity.tags.zone AS 'zone',",
 		"AVG('rtt-response-time'.value) AS 'Avg Response Time, ms',",
 		"LAST('rtt-count'.value) AS 'rtt-count',",
 		"LAST('rtt-error-count'.value) AS 'rtt-error-count',",
 		"LAST('rtt-error-percent'.value) AS 'rtt-error-percent' ",
-	"FROM 'rtt-response-time' ",
+	"FROM 'rtt-response-time' m",
 	"OUTER JOIN USING entity 'rtt-count' ",
 	"OUTER JOIN USING entity 'rtt-error-count' ",
 	"OUTER JOIN USING entity 'rtt-error-percent' ",
-	"WHERE datetime between '2015-09-30T00:00:00Z' and '2015-10-01T00:00:00Z' ",
-	"GROUP BY entity, tags, period(15 minute) WITH row_number(entity, tags order by time desc) <=1"
+	"WHERE m.datetime between '2015-10-14T00:00:00Z' and '2015-10-15T00:00:00Z' ",
+	"GROUP BY m.entity, m.tags, m.period(15 minute) WITH row_number(m.entity, m.tags order by m.time desc) <=1"
 	],
       "columns": [
         {
@@ -234,21 +236,23 @@
       "useEntityGroupFilter": false,
       "portalConfigPath": "portals/solar_power_stations.config",
       "sqlQuery": [
-        "SELECT",
-          "expected_kwh_annual_production.entity as 'entity',",
-          "expected_kwh_annual_production.tags.county AS 'County',",
-          "expected_kwh_annual_production.tags.city AS 'City',",
-          "expected_kwh_annual_production.tags.contractor AS 'Contractor',",
-          "expected_kwh_annual_production.value AS 'Expected kwh annual production',",
-          "project_cost.value AS 'Project cost',",
-          "incentive_dollars.value AS 'Incentive dollars',",
-          "project_count_by_city.value AS 'Project count by city',",
-          "total_nameplate_kw.value AS 'Total nameplate kw'",
-        "FROM expected_kwh_annual_production",
-        "JOIN incentive_dollars",
-        "JOIN project_cost",
-        "JOIN project_count_by_city",
-        "JOIN total_nameplate_kw"
+        "SELECT ",
+		"m1.entity as 'entity',",
+	    	"m1.tags.county AS 'County',",
+	    	"m1.tags.city AS 'City',",
+	    	"m1.tags.contractor AS 'Contractor',",
+	    	"LAST(m1.value) AS 'Expected kwh annual production',",
+	    	"LAST(m2.value) AS 'Project cost',",
+	    	"LAST(m3.value) AS 'Incentive dollars',",
+	    	"LAST(m4.value) AS 'Project count by city',",
+	    	"LAST(m5.value) AS 'Total nameplate kw'",
+	"FROM expected_kwh_annual_production m1 ",
+	"JOIN incentive_dollars m2 ",
+	"JOIN project_cost m3 ",
+	"JOIN project_count_by_city m4 ",
+	"JOIN total_nameplate_kw m5 ",
+	"WHERE m1.datetime BETWEEN '2011-01-01T00:00:00Z' AND '2016-01-01T00:00:00Z' ",
+	"GROUP BY m1.entity, m1.tags"
       ],
       "columns": [
         {
