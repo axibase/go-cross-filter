@@ -168,8 +168,8 @@ func (self *TableService) loadTable(tableConfig *TableConfig) (*Table, error) {
 				for _, responseCol := range columns {
 					if c, ok := responseCol.(map[string]interface{}); ok {
 						table.Columns = append(table.Columns, &Column{
-							Name:    c["titles"].(string),
-							Label:   c["name"].(string),
+							Name:    c["name"].(string),
+							Label:   c["titles"].(string),
 							Numeric: stringInSlice(c["datatype"].(string), NUMERIC_TYPES),
 						})
 					} else {
