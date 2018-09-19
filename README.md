@@ -1,31 +1,40 @@
-#Go Cross-filter
+# Go Cross Filter
 
-This is a golang application that implements the [cross-filter concept](https://square.github.io/crossfilter/) on top of data stored in [Axibase Time Series Database](https://axibase.com/products/axibase-time-series-database/). It provides a capability to apply graphical filters to entity tags and time series retrieved from the database, without reloading the dataset on the client. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/atsd/api/#sql) and refreshed on schedule. [Cross-filter.js](https://square.github.io/crossfilter/) and [datatables](https://www.datatables.net/) are used to build and maintain indices for fast filterting on the client. We use pie and histogram charts from the ATSD widget library to display the filters.
+![](./images/cross-filter-title.png)
 
-Try it [here](http://apps.axibase.com/cross-filter).
+## Table of Contents
+
+* [Overview](#overview)
+* [Dependencies](#dependencies)
+* [Getting Started](#getting-started)
+* [Usage](#usage)
+
+## Overview
+
+[**Axibase Cross Filter**](https://apps.axibase.com/cross-filter/?table=Linux%20Performance) is a Go-language application that implements the [cross-filter concept](https://square.github.io/crossfilter/) for use with data stored in [Axibase Time Series Database](https://axibase.com/docs/atsd/). The Cross Filter application provides the capability to apply graphical client-side filters to metadata and time series values, without reloading data from the server. Datasets are loaded from ATSD using [SQL queries](https://axibase.com/docs/atsd/sql/sql-console.html) and refreshed on a schedule. Cross Filter uses [`cross-filter.js`](https://square.github.io/crossfilter/) and [`datatables`](https://www.datatables.net/) to build and maintain indices to optimize client-side filtering. Filters are built using widgets from the [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md#axibase-charts) library.
+
 ## Dependencies
 
 Client:
 
-1. bootstrap v3.3.5
-2. jquery v2.1.4
-3. d3 v3.5.6
-4. datatables v1.10.9
-5. datatables scroller v1.3.0
-6. crossfilter v1.3.12
+1. Bootstrap `3.3.5`
+2. jQuery `2.1.4`
+3. D3.js `3.5.6`
+4. DataTables `1.10.9`
+5. DataTables Scroller `1.3.0`
+6. Crossfilter `1.3.12`
 
 Server:
 
-1. ATSD rev. >=11130
-2. Go dependencies from Godeps.json  
-
+1. ATSD Revision more current than `11130`
+2. Go dependencies from [Godeps.json](./Godeps/Godeps.json)  
 
 ## Getting Started
 
 ### Requirements
 
-1. golang build tools
-2. godep
+1. Go Language [Build Tools](https://golang.org/pkg/go/build/)
+2. Go Dependency Management Tool [`dep`](https://github.com/golang/dep)
 
 ### Install
 
@@ -40,9 +49,9 @@ go get github.com/axibase/go-capacity-screener
 godep go build
 ```
 
-### Usage
+## Usage
 
-This is a default program structure.
+Default program structure is enumerated below:
 
 ```text
 .
@@ -52,32 +61,34 @@ This is a default program structure.
 |   |-- index.tpl
 |   `-- view.tpl
 `-- portals                       - User defined portals folder
-    |-- itcam-rtt.conf        
+    |-- itcam-rtt.conf
     |-- nmon.conf
     `-- oracle_databases.conf
 ```
 
-#### Edit configuration file
+### Edit Configuration Files
 
-Define ATSD url, username and password:
+Define ATSD URL, username and password:
+
 ```bash
 {
   "url": "http://atsd_server:8088",   #define ATSD access credentials
-  "user": "username",                 
-  "password": "password",             
+  "user": "username",
+  "password": "password",
   "port": 8000,                       #application web view port
-  "updatePeriod": "1m",               #interval used to update all defined tables 
+  "updatePeriod": "1m",               #interval used to update all defined tables
   "tables": [
   ...                                 #define tables here
-  ]                        
+  ]
 }
 ```
 
 Define tables:
+
 ```bash
 ...
 "tables": [
-	{
+  {
       "name": "Linux Performance",                                 #table name                               
       "entityGroups": ["nmon-linux", "nurswg-dc1", "nurswg-dc2"],  #which entity groups can be used to filter the table(dataset) 
       "sqlQuery": ATSD_SQL_QUERY,                                  #SQL query to load data from ATSD
@@ -108,9 +119,9 @@ Define tables:
           "filter": {
             range: [0, 100]         #range option to set histogram range for numeric columns
           },
-          "formatter": {            #specify formatter for numeric columns to render column value based on formula (round(multiplier * value)) 
-            "round": 1              #you can specify "round" and "multiplier" independently. 
-          }                         
+          "formatter": {            #specify formatter for numeric columns to render column value based on formula (round(multiplier * value))
+            "round": 1              #you can specify "round" and "multiplier" independently.
+          }
         },
         {
           "name": "Memory Used, %",
@@ -139,14 +150,13 @@ Define tables:
           }
         }
       ]
-	},
-	...
+  },
+  ...
 ]
 ```
 
-#### Start the Application
+#### Launch the Application
 
 ```bash
 ./go-cross-filter
 ```
-
